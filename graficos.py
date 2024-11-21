@@ -1,8 +1,8 @@
 import dados
 #import folium
 
-df = dados.read_csv()
-
+df = dados.df
+dfEOL = dados.dfEOL
 #Análise regional de todos os dados
 
 def media_por_estado(df):
@@ -11,35 +11,16 @@ def media_por_estado(df):
 def corte_por_estado(df):
     return df.groupby(['nom_estado', 'Mes', 'cod_razaorestricao'])['Corte %'].mean().reset_index()
     
-'''
-def avaliacao_diaria(df):
-    # Agrupar por 'Hora' e calcular a média
-    agrupado = df.groupby('Hora').agg({
-        'val_geracaolimitada': 'mean',  
-        'val_disponibilidade': 'mean',    
-        'val_geracaoreferencia': 'mean',  
-        'val_geracao': 'mean'              
-    }).reset_index()
-    agrupado['Hora'] = pd.to_datetime(agrupado['Hora'].astype(str), format='%H:%M:%S')
-    agrupado['Hora'] = agrupado['Hora'].dt.strftime('%H:%M')
-    return agrupado    
-'''
 
 def total_por_estado(df):
     return df.groupby(['nom_estado', 'Mes', 'cod_razaorestricao', 'nom_usina'])['Geracao limitada MWh'].sum().reset_index()
 
 def media_por_estado_hora(df):
     return df.groupby(['nom_estado', 'Hora'])['val_geracaolimitada'].mean().reset_index()
-'''
-def corte_por_hora(df):
-    return df.groupby('Hora')['val_geracaolimitada'].sum().reset_index()
-'''
+
 def media_por_restricao(df):
     return df.groupby('cod_razaorestricao')['val_geracaolimitada'].mean().reset_index()
-'''
-def total_por_restricao(df):
-    return df.groupby('cod_razaorestricao')['val_geracaolimitada'].sum().reset_index()
-'''
+
 # Funções que calculam percentuais
 def percentuais_por_tipo(df):
     tipo_estado = df[df['val_geracaolimitada'].notna() & (df['val_geracaolimitada'] != 0)].groupby('cod_razaorestricao')['val_geracaolimitada'].count()
