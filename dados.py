@@ -11,9 +11,46 @@ def read_csv():
     for arquivo in os.listdir(arquivos): #Varre todos os arquivos da pasta
         if arquivo.endswith('.csv'):
             caminho_arquivo = os.path.join(arquivos, arquivo)
-            df = pd.read_csv(caminho_arquivo, sep=';') #Arquivos da ons estão separados por ;
+            df = pd.read_csv(caminho_arquivo, sep=';', dtype={13: str, 14: str}, low_memory=False) #Arquivos da ons estão separados por ;
             dfs.append(df) #Armazena todos os arquivos .cvs na lista dfs
     df = pd.concat(dfs, ignore_index=True) #Concatena todos os DataFrames em um único
+    
+    # Ajuste para "geração referência" maior que "disponibilidade"
+    df.loc[df['val_geracaoreferencia'] > df['val_disponibilidade'], 'val_geracaoreferencia'] = df['val_disponibilidade']
+    
+    # Ajuste de "geração" se for maior que "disponibilidade"
+    df.loc[df['val_geracao'] > df['val_disponibilidade'], 'val_geracao'] = df['val_disponibilidade']
+    
+    # Ajuste para geração maior que zero com a Usina desligada
+    df.loc[df['val_geracaolimitada'] == 0, 'val_geracao'] = df.apply(
+        lambda row: 0 if row['val_geracao'] == 0 else (
+            row['val_geracao'] if row['val_geracao'] > row['val_geracaoreferencia'] and row['val_geracao'] < row['val_disponibilidade']
+            else (
+                row['val_geracaoreferencia'] if row['val_geracao'] > row['val_disponibilidade'] else row['val_geracao']
+            )
+        ), axis=1
+    )
+    df.loc[df['val_geracaolimitada'] == 0, 'val_geracaoreferencia'] = df.apply(
+        lambda row: row['val_geracao'] if row['val_geracao'] > row['val_geracaoreferencia'] and row['val_geracao'] < row['val_disponibilidade'] else (
+            row['val_disponibilidade'] if row['val_geracao'] > row['val_disponibilidade'] else row['val_geracaoreferencia']
+        ), axis=1
+    )
+
+    # Preenchimento da Geração Frustrada
+    df['geracao_frustrada'] = np.where(
+        df['val_geracaolimitada'] != 0,  # Se geração limitada não é zero
+        np.where(
+            df['val_geracaoreferencia'] > df['val_geracao'],  # Se val_geracaoreferencia > val_geracao
+            df['val_geracaoreferencia'] - df['val_geracao'],  # Então geracao_frustada = val_geracaoreferencia - val_geracao
+            0  # Caso contrário, geracao_frustada = 0
+        ),
+        np.where(
+            df['val_geracaolimitada'] == 0,  # Se geração limitada é 0, ONS desligou a Usina
+            df['val_geracaoreferencia'],  # Então geracao_frustada = val_geracaoreferencia
+            np.nan  # Caso contrário, geracao_frustada = NaN
+        )
+    )
+    
     
     #Separando dia e hora em 2 colunas diferentes
     df['din_instante'] = pd.to_datetime(df['din_instante']) #Conversão em formato de data
@@ -25,12 +62,13 @@ def read_csv():
         (df['val_geracaolimitada'].notna()) & 
         (df['val_disponibilidade'].notna()) & 
         (df['val_disponibilidade'] != 0) & 
-        (df['val_geracaolimitada'] <= df['val_disponibilidade']),  # Verificação adicional
-        100 * (df['val_geracaolimitada'] / df['val_disponibilidade']),  # Corte %
+        (df['geracao_frustrada'] <= df['val_disponibilidade']),  # Verificação adicional
+        100 * (df['geracao_frustrada'] / df['val_disponibilidade']),  # Corte %
         np.nan  # Caso contrário, atribui NaN
     )
     df['Geracao MWh'] = df['val_geracao']/2 #Geração em MWh é a geração média (dada em intervalos de 30 min) / 2
-    df['Geracao limitada MWh'] = df['val_geracaolimitada']/2
+    df['Geracao frustrada MWh'] = df['geracao_frustrada']/2
+ 
     return df
 
 def read_csvEOL():
@@ -40,9 +78,46 @@ def read_csvEOL():
     for arquivo in os.listdir(arquivos): #Varre todos os arquivos da pasta
         if arquivo.endswith('.csv'):
             caminho_arquivo = os.path.join(arquivos, arquivo)
-            df = pd.read_csv(caminho_arquivo, sep=';') #Arquivos da ons estão separados por ;
+            df = pd.read_csv(caminho_arquivo, sep=';', dtype={13: str, 14: str}, low_memory=False) #Arquivos da ons estão separados por ;
             dfs.append(df) #Armazena todos os arquivos .cvs na lista dfs
     df = pd.concat(dfs, ignore_index=True) #Concatena todos os DataFrames em um único
+    
+    # Ajuste para "geração referência" maior que "disponibilidade"
+    df.loc[df['val_geracaoreferencia'] > df['val_disponibilidade'], 'val_geracaoreferencia'] = df['val_disponibilidade']
+    
+    # Ajuste de "geração" se for maior que "disponibilidade"
+    df.loc[df['val_geracao'] > df['val_disponibilidade'], 'val_geracao'] = df['val_disponibilidade']
+    
+    # Ajuste para geração maior que zero com a Usina desligada
+    df.loc[df['val_geracaolimitada'] == 0, 'val_geracao'] = df.apply(
+        lambda row: 0 if row['val_geracao'] == 0 else (
+            row['val_geracao'] if row['val_geracao'] > row['val_geracaoreferencia'] and row['val_geracao'] < row['val_disponibilidade']
+            else (
+                row['val_geracaoreferencia'] if row['val_geracao'] > row['val_disponibilidade'] else row['val_geracao']
+            )
+        ), axis=1
+    )
+    df.loc[df['val_geracaolimitada'] == 0, 'val_geracaoreferencia'] = df.apply(
+        lambda row: row['val_geracao'] if row['val_geracao'] > row['val_geracaoreferencia'] and row['val_geracao'] < row['val_disponibilidade'] else (
+            row['val_disponibilidade'] if row['val_geracao'] > row['val_disponibilidade'] else row['val_geracaoreferencia']
+        ), axis=1
+    )
+
+    # Preenchimento da Geração Frustrada
+    df['geracao_frustrada'] = np.where(
+        df['val_geracaolimitada'] != 0,  # Se geração limitada não é zero
+        np.where(
+            df['val_geracaoreferencia'] > df['val_geracao'],  # Se val_geracaoreferencia > val_geracao
+            df['val_geracaoreferencia'] - df['val_geracao'],  # Então geracao_frustada = val_geracaoreferencia - val_geracao
+            0  # Caso contrário, geracao_frustada = 0
+        ),
+        np.where(
+            df['val_geracaolimitada'] == 0,  # Se geração limitada é 0, ONS desligou a Usina
+            df['val_geracaoreferencia'],  # Então geracao_frustada = val_geracaoreferencia
+            np.nan  # Caso contrário, geracao_frustada = NaN
+        )
+    )
+    
     
     #Separando dia e hora em 2 colunas diferentes
     df['din_instante'] = pd.to_datetime(df['din_instante']) #Conversão em formato de data
@@ -54,12 +129,13 @@ def read_csvEOL():
         (df['val_geracaolimitada'].notna()) & 
         (df['val_disponibilidade'].notna()) & 
         (df['val_disponibilidade'] != 0) & 
-        (df['val_geracaolimitada'] <= df['val_disponibilidade']),  # Verificação adicional
-        100 * (df['val_geracaolimitada'] / df['val_disponibilidade']),  # Corte %
+        (df['geracao_frustrada'] <= df['val_disponibilidade']),  # Verificação adicional
+        100 * (df['geracao_frustrada'] / df['val_disponibilidade']),  # Corte %
         np.nan  # Caso contrário, atribui NaN
     )
     df['Geracao MWh'] = df['val_geracao']/2 #Geração em MWh é a geração média (dada em intervalos de 30 min) / 2
-    df['Geracao limitada MWh'] = df['val_geracaolimitada']/2
+    df['Geracao frustrada MWh'] = df['geracao_frustrada']/2
+    
     return df
 
 df = read_csv()

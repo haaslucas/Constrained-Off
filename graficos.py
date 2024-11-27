@@ -6,43 +6,43 @@ dfEOL = dados.dfEOL
 #Análise regional de todos os dados
 
 def media_por_estado(df):
-    return df.groupby(['nom_estado', 'Mes'])['Geracao limitada MWh'].mean().reset_index()
+    return df.groupby(['nom_estado', 'Mes'])['Geracao frustrada MWh'].mean().reset_index()
 
 def corte_por_estado(df):
     return df.groupby(['nom_estado', 'Mes', 'cod_razaorestricao'])['Corte %'].mean().reset_index()
     
 
 def total_por_estado(df):
-    return df.groupby(['nom_estado', 'Mes', 'cod_razaorestricao', 'nom_usina'])['Geracao limitada MWh'].sum().reset_index()
+    return df.groupby(['nom_estado', 'Mes', 'cod_razaorestricao', 'nom_usina'])['Geracao frustrada MWh'].sum().reset_index()
 
 def media_por_estado_hora(df):
-    return df.groupby(['nom_estado', 'Hora'])['val_geracaolimitada'].mean().reset_index()
+    return df.groupby(['nom_estado', 'Hora'])['geracao_frustrada'].mean().reset_index()
 
 def media_por_restricao(df):
-    return df.groupby('cod_razaorestricao')['val_geracaolimitada'].mean().reset_index()
+    return df.groupby('cod_razaorestricao')['geracao_frustrada'].mean().reset_index()
 
 # Funções que calculam percentuais
 def percentuais_por_tipo(df):
-    tipo_estado = df[df['val_geracaolimitada'].notna() & (df['val_geracaolimitada'] != 0)].groupby('cod_razaorestricao')['val_geracaolimitada'].count()
+    tipo_estado = df[df['val_geracaolimitada'].notna() & (df['geracao_frustrada'] != 0)].groupby('cod_razaorestricao')['geracao_frustrada'].sum()
     tipo_total = tipo_estado.sum()
     percentuais = (tipo_estado / tipo_total) * 100
-    return percentuais.reset_index(name='val_geracaolimitada')  # Renomeando a coluna
+    return percentuais.reset_index(name='geracao_frustrada')  # Renomeando a coluna
 
 def percentuais_por_estado(df):
-    estado = df[df['val_geracaolimitada'].notna() & (df['val_geracaolimitada'] != 0)].groupby('nom_estado')['val_geracaolimitada'].count()
+    estado = df[df['geracao_frustrada'].notna() & (df['geracao_frustrada'] != 0)].groupby('nom_estado')['geracao_frustrada'].count()
     estado_total = estado.sum()    
     # Calculando os percentuais e retornando como DataFrame
     percentuais = (estado / estado_total) * 100
-    return percentuais.reset_index(name='val_geracaolimitada')  # Renomeando a coluna
+    return percentuais.reset_index(name='geracao_frustrada')  # Renomeando a coluna
 
 def percentuais_por_regiao(df):
-    regiao = df[df['val_geracaolimitada'].notna() & (df['val_geracaolimitada'] != 0)].groupby('id_subsistema')['val_geracaolimitada'].count()
+    regiao = df[df['geracao_frustrada'].notna() & (df['geracao_frustrada'] != 0)].groupby('id_subsistema')['geracao_frustrada'].count()
     regiao_total = regiao.sum()
     percentuais = (regiao / regiao_total) * 100
-    return percentuais.reset_index(name='val_geracaolimitada')  # Renomeando a coluna
+    return percentuais.reset_index(name='geracao_frustrada')  # Renomeando a coluna
 
 def percentuais_por_hora(df):
-    hora = df[df['val_geracaolimitada'].notna() & (df['val_geracaolimitada'] != 0)].groupby('Hora')['val_geracaolimitada'].count()
+    hora = df[df['geracao_frustrada'].notna() & (df['geracao_frustrada'] != 0)].groupby('Hora')['geracao_frustrada'].count()
     hora_total = hora.sum()
     return ((hora / hora_total) * 100).map(lambda x: f'{x:.2f}%').reset_index()
 

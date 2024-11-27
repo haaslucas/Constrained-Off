@@ -7,6 +7,8 @@ from shiny import run_app
 import pandas as pd
 from shiny import App, render, reactive, ui
 
+print('Iniciando aplicativo...')
+
 app_ui = ui.page_fluid(
     ui.h2("Constrained Off de Usinas Eólicas - Dados Abertos ONS"),
     
@@ -71,16 +73,16 @@ def server(input, output, session):
         media = media.sort_values('Mes')
 
         # Agrupando por 'Mes' e 'cod_razaorestricao', somando as gerações por restrição para o mês
-        media_agrupada = media.groupby(['Mes', 'cod_razaorestricao'])['Geracao limitada MWh'].sum().unstack(fill_value=0)
+        media_agrupada = media.groupby(['Mes', 'cod_razaorestricao'])['Geracao frustrada MWh'].sum().unstack(fill_value=0)
 
         # Configurando o gráfico
         fig, ax = plt.subplots(figsize=(12, 6))
         media_agrupada.plot(kind='bar', ax=ax, stacked=True, width=0.8)
 
         # Títulos e rótulos
-        ax.set_title('Total de Geração Limitada por Mês e Tipo de Restrição')
+        ax.set_title('Total de Geração Frustrada por Mês e Tipo de Restrição')
         ax.set_xlabel('Mês')
-        ax.set_ylabel('Geração Limitada [MWh]')
+        ax.set_ylabel('Geração Frustrada [MWh]')
         
         # Ajustando os rótulos do eixo x para mostrar apenas mês e ano
         ax.set_xticks(range(len(media_agrupada.index)))  # Define os locais dos rótulos
@@ -117,16 +119,16 @@ def server(input, output, session):
         media = media.sort_values('Mes')  # Ordenando cronologicamente
     
         # Criando a tabela pivot com 'nom_estado' como colunas, e 'Mes' como índice
-        df_pivot = media.pivot_table(index='Mes', columns='nom_estado', values='Geracao limitada MWh', aggfunc='sum')
+        df_pivot = media.pivot_table(index='Mes', columns='nom_estado', values='Geracao frustrada MWh', aggfunc='sum')
     
         # Configuração do gráfico com matplotlib
         fig, ax = plt.subplots(figsize=(12, 7))
         df_pivot.plot(kind='bar', ax=ax, stacked=False, width=0.8)
     
         # Ajustes do gráfico
-        ax.set_title('Total de Geração Limitada por Estado e Mês - Valores Absolutos')
+        ax.set_title('Total de Geração Frustrada por Estado e Mês - Valores Absolutos')
         ax.set_xlabel('Mês')
-        ax.set_ylabel('Geração Limitada [MWh]')
+        ax.set_ylabel('Geração Frustrada [MWh]')
         
         # Formatando o eixo x para exibir apenas o mês e o ano
         ax.set_xticklabels(df_pivot.index.strftime('%b %Y'), rotation=45)
@@ -164,7 +166,7 @@ def server(input, output, session):
         # Plotar o gráfico de barras, com cada estado sendo uma cor diferente
         df_pivot.plot(kind='bar', ax=ax, stacked=False)
         # Ajustes do gráfico
-        ax.set_title('Média de Geração Limitada por Estado e Mês - Valores %')
+        ax.set_title('Média de Geração Frustrada por Estado e Mês - Valores %')
         ax.set_xlabel('Mês')
         ax.set_ylabel('Corte % (em função da disponibilidade)')       
         # Adicionar legenda e ajustar layout
@@ -185,7 +187,7 @@ def server(input, output, session):
         if input.usina() == "Todos":
         # Todas as usinas selecionadas pega a média geral
             media = df_filtrado.groupby('Hora').agg({
-                'val_geracaolimitada': 'mean',  
+                'geracao_frustrada': 'mean',  
                 'val_disponibilidade': 'mean',    
                 'val_geracaoreferencia': 'mean',  
                 'val_geracao': 'mean'
@@ -198,7 +200,7 @@ def server(input, output, session):
             
             # Agrupa por 'Hora' e 'nom_usina' para a usina específica
             media = df_filtrado.groupby(['Hora', 'nom_usina']).agg({
-                'val_geracaolimitada': 'mean',  
+                'geracao_frustrada': 'mean',  
                 'val_disponibilidade': 'mean',    
                 'val_geracaoreferencia': 'mean',  
                 'val_geracao': 'mean'
@@ -210,7 +212,7 @@ def server(input, output, session):
         fig, ax = plt.subplots(figsize=(12, 6))
         
         # Plotar as linhas para cada coluna desejada
-        ax.plot(media['Hora'], media['val_geracaolimitada'], label='Geração Limitada', marker='o')
+        ax.plot(media['Hora'], media['geracao_frustrada'], label='Geração Frustrada', marker='o')
         ax.plot(media['Hora'], media['val_disponibilidade'], label='Disponibilidade', marker='o')
         ax.plot(media['Hora'], media['val_geracaoreferencia'], label='Geração Referência', marker='o')
         ax.plot(media['Hora'], media['val_geracao'], label='Geração Real', marker='o')
@@ -239,7 +241,7 @@ def server(input, output, session):
         
         dados_pizza = percentuais_por_tipo(df_filtrado)
         labels = dados_pizza['cod_razaorestricao']
-        sizes = dados_pizza['val_geracaolimitada']
+        sizes = dados_pizza['geracao_frustrada']
 
         fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle=90)
@@ -260,7 +262,7 @@ def server(input, output, session):
         
         dados_pizza = percentuais_por_regiao(df_filtrado)
         labels = dados_pizza['id_subsistema']
-        sizes = dados_pizza['val_geracaolimitada']
+        sizes = dados_pizza['geracao_frustrada']
 
         fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle=90)
@@ -281,7 +283,7 @@ def server(input, output, session):
         
         dados_pizza = percentuais_por_estado(df_filtrado)
         labels = dados_pizza['nom_estado']
-        sizes = dados_pizza['val_geracaolimitada']
+        sizes = dados_pizza['geracao_frustrada']
 
         fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle=90)
