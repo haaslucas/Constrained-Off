@@ -28,6 +28,11 @@ def percentuais_por_tipo(df):
     percentuais = (tipo_estado / tipo_total) * 100
     return percentuais.reset_index(name='geracao_frustrada')  # Renomeando a coluna
 
+# Funções que calculam percentuais
+def total_por_tipo(df):
+    total_tipo = df[df['val_geracaolimitada'].notna() & (df['geracao_frustrada'] != 0)].groupby('cod_razaorestricao')['geracao_frustrada'].sum()
+    return total_tipo
+
 def percentuais_por_estado(df):
     estado = df[df['geracao_frustrada'].notna() & (df['geracao_frustrada'] != 0)].groupby('nom_estado')['geracao_frustrada'].count()
     estado_total = estado.sum()    

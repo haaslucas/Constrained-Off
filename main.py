@@ -2,38 +2,42 @@
 import download_coff as d_coff
 import subprocess
 
-# Função para exibir a seleção do dashboard
+# FunÃ§Ã£o para exibir a seleÃ§Ã£o do dashboard
 def selecionar_dashboard():
     print("Selecione o dashboard desejado:")
     print("1 - EOLICA")
     print("2 - FOTOVOLTAICA")
     
-    # Recebe a escolha do usuário
+    # Recebe a escolha do usuÃ¡rio
     escolha = input("Digite o numero correspondente ao dashboard desejado: ")
 
     return escolha
 
-# Função para executar o script com base na escolha do usuário
+# FunÃ§Ã£o para executar o script com base na escolha do usuÃ¡rio
 def executar_dashboard(escolha):
     if escolha == "1":
         print("Executando o dashboard de Constrained off das Usinas Eolicas...")
-        # Executa o script appEOL.py (assumindo que o Python esteja instalado corretamente)
+        subprocess.run(["python", "dados.py"])
         subprocess.run(["python", "appEOL.py"])
     elif escolha == "2":
         print("Executando o dashboard Constrained off das Usinas Fotovoltaicas...")
         # Executa o script app.py
+        subprocess.run(["python", "dados.py"])
         subprocess.run(["python", "app.py"])
     else:
         print("Valor invalido. Tente novamente.")
 
-# Função principal que controla o fluxo
+# FunÃ§Ã£o principal que controla o fluxo
 def inicio():
-    escolha = selecionar_dashboard()  # Recebe a escolha do usuário
+    escolha = selecionar_dashboard()  # Recebe a escolha do usuÃ¡rio
     executar_dashboard(escolha)  # Executa o dashboard com base na escolha
 
+'''
 # Download do banco de dados
 d_coff.download_files()  # Baixa os arquivos de coff de usinas fotovoltaicas
-d_coff.download_filesEOL()  # Baixa os arquivos de coff de usinas eólicas
+d_coff.download_filesEOL()  # Baixa os arquivos de coff de usinas eÃ³licas
+
+'''
 
 inicio()
 

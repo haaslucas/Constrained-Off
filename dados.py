@@ -3,6 +3,11 @@ import os
 import numpy as np
 import locale
 locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+from download_coff import DownloadManager
+
+manager = DownloadManager()
+manager.download_files()
+manager.download_filesEOL()
 
 def read_csv():
     dfs = [] #Lista base contendo todos os DataFrames
@@ -68,7 +73,7 @@ def read_csv():
     )
     df['Geracao MWh'] = df['val_geracao']/2 #Geração em MWh é a geração média (dada em intervalos de 30 min) / 2
     df['Geracao frustrada MWh'] = df['geracao_frustrada']/2
- 
+    df.to_parquet('dataframeFV.parquet', index=False)
     return df
 
 def read_csvEOL():
@@ -135,9 +140,28 @@ def read_csvEOL():
     )
     df['Geracao MWh'] = df['val_geracao']/2 #Geração em MWh é a geração média (dada em intervalos de 30 min) / 2
     df['Geracao frustrada MWh'] = df['geracao_frustrada']/2
-    
+    df = df[df['val_disponibilidade'] >= 0]
+    df.to_parquet('dataframeEOL.parquet', index=False)
     return df
 
-df = read_csv()
-dfEOL = read_csvEOL()
-dfEOL = dfEOL[dfEOL['val_disponibilidade'] >= 0]
+script_dir = os.path.dirname(os.path.abspath(__file__))
+file_pathFV = os.path.join(script_dir, 'dataframeFV.parquet')
+file_pathEOL = os.path.join(script_dir, 'dataframeEOL.parquet')
+
+# Verifica se o arquivo existe no mesmo diretório do script e que nenhum arquivo novo foi baixado
+if os.path.exists(file_pathFV) and not manager.downloadrealizadoFV:
+    # Carrega o DataFrame se o arquivo já existir
+    df = pd.read_parquet(file_pathFV)
+    print("DataFrame carregado a partir do arquivo existente.")
+else:
+    print("Arquivos base foram atualizados, carregando novos dados...")
+    df = read_csv()
+
+if os.path.exists(file_pathEOL) and not manager.downloadrealizadoEOL:
+    # Carrega o DataFrame se o arquivo já existir
+    dfEOL = pd.read_parquet(file_pathEOL)
+    print("DataFrame carregado a partir do arquivo existente.")
+else:
+    print("Arquivos base foram atualizados, carregando novos dados...")
+    dfEOL = read_csvEOL()
+    

@@ -1,34 +1,59 @@
 from graficos import (
     total_por_estado,
-    percentuais_por_tipo, percentuais_por_estado, percentuais_por_regiao, corte_por_estado, dfEOL
+    percentuais_por_tipo, percentuais_por_estado, percentuais_por_regiao, corte_por_estado, total_por_tipo
 )
 import matplotlib.pyplot as plt
+import numpy as np
 from shiny import run_app
 import pandas as pd
 from shiny import App, render, reactive, ui
+from dados import dfEOL
 
 print('Iniciando aplicativo...')
 
 app_ui = ui.page_fluid(
     ui.h2("Constrained Off de Usinas Eólicas - Dados Abertos ONS"),
-    
-    # Filtros
-    ui.input_select("estado", "Selecione o Estado:", choices=["Todos"] + list(dfEOL['nom_estado'].unique())),
-    ui.input_select("tipo_restricao", "Selecione a Restrição:", choices=["Todos"] + list(dfEOL['cod_razaorestricao'].dropna().unique())),
-    ui.input_select("usina", "Selecione a Usina:", choices=["Todos"]),
 
-    ui.row(
-        ui.column(4, ui.output_plot("por_tipo")),     
-        ui.column(4, ui.output_plot("por_regiao")),  
-        ui.column(4, ui.output_plot("por_estado"))
-    ),
+    # Navegação por abas
+    ui.navset_tab(
+        # Aba Dashboard
+        ui.nav_panel(
+            "Dashboard",
+            ui.row(
+                ui.column(3, ui.input_select("estado", "Selecione o Estado:", choices=["Todos"] + list(dfEOL['nom_estado'].unique()))),
+                ui.column(3, ui.input_select("tipo_restricao", "Selecione a Restrição:", choices=["Todos"] + list(dfEOL['cod_razaorestricao'].dropna().unique()))),
+                ui.column(3, ui.input_select("usina", "Selecione a Usina:", choices=["Todos"]))
+            ),
+            ui.row(
+                ui.column(4, ui.output_plot("por_tipo")),
+                ui.column(4, ui.output_plot("por_regiao")),
+                ui.column(4, ui.output_plot("por_estado"))
+            ),
+            ui.output_plot("total"),
+            ui.output_plot("total_estado"),
+            ui.output_plot("corte_estado"),
+            ui.output_plot("media_diaria")
+        ),
 
-    # Output para mostrar gráficos ou tabelas
-    ui.output_plot("total"),
-    ui.output_plot("total_estado"),
-    ui.output_plot("corte_estado"),
-    ui.output_plot("media_diaria")
- 
+        # Aba Comparativos
+        ui.nav_panel(
+            "Comparativos",
+            ui.h3("Comparação de Usinas"),
+            # Filtros organizados conforme solicitado
+            ui.row(
+                ui.column(4, ui.input_select("estado1", "Estado (Usina 1):", choices=["Todos"] + list(dfEOL['nom_estado'].unique()))),
+                ui.column(4, ui.input_select("estado2", "Estado (Usina 2):", choices=["Todos"] + list(dfEOL['nom_estado'].unique()))),
+                ui.column(4, ui.input_select("estado3", "Estado (Usina 3):", choices=["Todos"] + list(dfEOL['nom_estado'].unique())))
+            ),
+            ui.row(
+                ui.column(4, ui.input_select("usina1", "Usina 1:", choices=["Todos"])),
+                ui.column(4, ui.input_select("usina2", "Usina 2:", choices=["Todos"])),
+                ui.column(4, ui.input_select("usina3", "Usina 3:", choices=["Todos"]))
+            ),
+            # Gráfico comparativo
+            ui.output_plot("comparativo_grafico")
+        )
+    )
 )
 
 def server(input, output, session):
@@ -47,6 +72,37 @@ def server(input, output, session):
         
         # Atualiza as opções do filtro de usina
         ui.update_select("usina", choices=opcoes_usina)
+        
+ # Atualiza o filtro de usina 1 com base no estado 1
+    @reactive.Effect
+    @reactive.event(input.estado1)
+    def atualizar_opcoes_usina1():
+        if input.estado1() == "Todos":
+            opcoes_usina1 = ["Todos"] + list(dfEOL['nom_usina'].dropna().unique())
+        else:
+            opcoes_usina1 = ["Todos"] + list(dfEOL[dfEOL['nom_estado'] == input.estado1()]['nom_usina'].dropna().unique())
+        ui.update_select("usina1", choices=opcoes_usina1)
+
+    # Atualiza o filtro de usina 2 com base no estado 2
+    @reactive.Effect
+    @reactive.event(input.estado2)
+    def atualizar_opcoes_usina2():
+        if input.estado2() == "Todos":
+            opcoes_usina2 = ["Todos"] + list(dfEOL['nom_usina'].dropna().unique())
+        else:
+            opcoes_usina2 = ["Todos"] + list(dfEOL[dfEOL['nom_estado'] == input.estado2()]['nom_usina'].dropna().unique())
+        ui.update_select("usina2", choices=opcoes_usina2)
+
+    # Atualiza o filtro de usina 3 com base no estado 3
+    @reactive.Effect
+    @reactive.event(input.estado3)
+    def atualizar_opcoes_usina3():
+        if input.estado3() == "Todos":
+            opcoes_usina3 = ["Todos"] + list(dfEOL['nom_usina'].dropna().unique())
+        else:
+            opcoes_usina3 = ["Todos"] + list(dfEOL[dfEOL['nom_estado'] == input.estado3()]['nom_usina'].dropna().unique())
+        ui.update_select("usina3", choices=opcoes_usina3)
+
 
     @output
     @render.plot
@@ -284,12 +340,95 @@ def server(input, output, session):
         dados_pizza = percentuais_por_estado(df_filtrado)
         labels = dados_pizza['nom_estado']
         sizes = dados_pizza['geracao_frustrada']
-
-        fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct=lambda p: f'{p:.1f}%', startangle=90)
-        ax.axis('equal')
-        
+    
+        # Calcula os percentuais
+        total = sum(sizes)
+        percentuais = [f"{label} - {size / total * 100:.1f}%" for label, size in zip(labels, sizes)]
+    
+        # Criando o gráfico
+        fig, ax = plt.subplots(figsize=(8, 6))
+        wedges, *_ = ax.pie(
+            sizes, 
+            labels=None,  # Remove os rótulos diretamente do gráfico
+            startangle=90
+        )
+        ax.axis('equal')  # Mantém o gráfico como um círculo perfeito
+    
+        # Adicionando uma legenda externa com os percentuais
+        ax.legend(
+            wedges, 
+            percentuais,  # Exibe estados com percentuais
+            title="Estados", 
+            loc="center left", 
+            bbox_to_anchor=(1, 0.5),  # Posiciona a legenda fora do gráfico
+            fontsize=10
+        )
+    
         return fig
+    
+    @output
+    @render.plot
+    def comparativo_grafico():
+        usinas_selecionadas = [input.usina1(), input.usina2(), input.usina3()]
+    
+        # Filtra o dataframe para as usinas selecionadas (filtro de estado removido)
+        df_filtrado = dfEOL[dfEOL['nom_usina'].isin(usinas_selecionadas)]
+    
+        if not df_filtrado.empty:
+            # Obter os tipos de restrição disponíveis
+            restricoes = df_filtrado['cod_razaorestricao'].unique()
+            restricoes = [r for r in restricoes if pd.notna(r)]  # Filtra valores NaN
+    
+            # Prepara os dados para o gráfico de radar
+            categorias = restricoes
+            usinas_dados = []
+    
+            for usina in usinas_selecionadas:
+                # Filtra os dados para a usina atual
+                df_usina = df_filtrado[df_filtrado['nom_usina'] == usina]
+    
+                # Calcula a soma da geração frustrada por tipo de restrição
+                geracao_por_restricao = total_por_tipo(df_usina)
+                
+                # Preenche os dados para cada categoria (restrição)
+                usina_dados = [geracao_por_restricao.get(r, 0) for r in categorias]
+                usinas_dados.append(usina_dados)
+    
+            # Cria o gráfico de radar
+            fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+    
+            # Número de categorias (tipos de restrição)
+            num_vars = len(categorias)
+    
+            # Ângulos para cada categoria
+            angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+    
+            # Ajusta o gráfico para que o primeiro vértice fique no topo
+            angles += angles[:1]
+    
+            # Plotando cada usina no gráfico de radar
+            for i, usina_dados in enumerate(usinas_dados):
+                usina_dados += usina_dados[:1]  # Fecha o gráfico conectando o último ponto com o primeiro
+                ax.plot(angles, usina_dados, label=usinas_selecionadas[i], linewidth=2)
+                ax.fill(angles, usina_dados, alpha=0.25)  # Preenche a área sob a curva
+    
+            # Ajusta a aparência do gráfico
+            ax.set_yticklabels([])  # Remove as labels do eixo radial
+            ax.set_xticks(angles[:-1])  # Define as posições dos rótulos de cada categoria
+            ax.set_xticklabels(categorias)  # Define os rótulos de cada categoria
+    
+            ax.set_title("Comparativo de Geração Frustrada por Tipo de Restrição", size=16)
+    
+            # Ajusta a posição da legenda para o lado direito do gráfico
+            ax.legend(title="Usinas", loc='center left', bbox_to_anchor=(1.1, 0.5))
+    
+            plt.tight_layout()
+            return fig
+        else:
+            fig, ax = plt.subplots()
+            ax.text(0.5, 0.5, "Sem dados para exibir", ha='center', va='center')
+            return fig
+
     
 # Inicializa o app
 app = App(app_ui, server)
