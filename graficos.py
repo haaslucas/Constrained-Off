@@ -1,5 +1,6 @@
 import dados
-#import folium
+import folium
+import imgkit
 
 df = dados.df
 dfEOL = dados.dfEOL
@@ -33,6 +34,16 @@ def total_por_tipo(df):
     total_tipo = df[df['val_geracaolimitada'].notna() & (df['geracao_frustrada'] != 0)].groupby('cod_razaorestricao')['geracao_frustrada'].sum()
     return total_tipo
 
+def total_por_tipo_normalizado(df):
+    # Filtra o DataFrame para os registros desejados
+    filtro = df['val_geracaolimitada'].notna() & (df['geracao_frustrada'] != 0)
+    df_filtrado = df[filtro]
+
+    # Agrupa por 'cod_razaorestricao' e soma os valores normalizados
+    total_tipo_normalizado = df_filtrado.groupby('cod_razaorestricao')['geracao_frustrada'].sum()/df_filtrado['geracao_frustrada'].sum()
+    return total_tipo_normalizado
+
+
 def percentuais_por_estado(df):
     estado = df[df['geracao_frustrada'].notna() & (df['geracao_frustrada'] != 0)].groupby('nom_estado')['geracao_frustrada'].count()
     estado_total = estado.sum()    
@@ -51,130 +62,170 @@ def percentuais_por_hora(df):
     hora_total = hora.sum()
     return ((hora / hora_total) * 100).map(lambda x: f'{x:.2f}%').reset_index()
 
-''' FUNCIONA BEM O PRIMEIRO
-#Gráficos com mapa do Brasil
 
-#Magnitude por estado
-estados_data = {
-    'estado': ['ACRE', 'ALAGOAS', 'AMAPÁ', 'AMAZONAS', 'BAHIA', 'CEARÁ', 'DISTRITO FEDERAL', 'ESPÍRITO SANTO',
-               'GOIÁS', 'MARANHÃO', 'MATO GROSSO', 'MATO GROSSO DO SUL', 'MINAS GERAIS', 'PARÁ', 'PARAÍBA', 'PARANÁ',
-               'PERNAMBUCO', 'PIAUÍ', 'RIO DE JANEIRO', 'RIO GRANDE DO NORTE', 'RIO GRANDE DO SUL', 'RONDÔNIA',
-               'RORAIMA', 'SANTA CATARINA', 'SÃO PAULO', 'SERGIPE', 'TOCANTINS'],
-    'lat': [-9.974, -9.5713, 0.902, -3.4168, -12.9704, -3.7172, -15.7801, -19.1834, -15.827, -2.5307, -12.6819,
-            -20.4428, -18.5122, -1.455, -7.1202, -25.2521, -8.0476, -5.092, -22.9068, -5.7945, -30.0346, -11.5057,
-            2.8235, -27.5954, -23.5505, -10.9472, -10.1753],
-    'lon': [-67.824, -36.9054, -52.0469, -65.8561, -38.5124, -38.5434, -47.9292, -40.3089, -49.8362, -44.298,
-            -56.925, -54.6469, -44.555, -48.502, -34.8707, -52.0215, -34.877, -42.8019, -43.1729, -35.2094, -51.2177,
-            -63.5806, -60.6758, -48.548, -46.6333, -37.0731, -48.2982]
-}
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
+import os
 
-# Converte para DataFrame
-estados_df = pd.DataFrame(estados_data)
 
-# Calcula o somatório da geração limitada por estado
-gerlmtd = df.groupby('nom_estado')['val_geracaolimitada'].sum().reset_index()
+def gerar_mapa(df, estado, tipo_restricao, usina):
+    # Filtrar os dados com base nos filtros
+    if estado != "Todos":
+        df = df[df['nom_estado'] == estado]
+    if tipo_restricao != "Todos":
+        df = df[df['cod_razaorestricao'] == tipo_restricao]
+    if usina != "Todos":
+        df = df[df['nom_usina'] == usina]
 
-# Renomeia a coluna para 'magnitude' para facilitar a mesclagem
-gerlmtd.rename(columns={'nom_estado': 'estado', 'val_geracaolimitada': 'magnitude'}, inplace=True)
+    # Verificar se há dados após os filtros
+    if df.empty:
+        print("Nenhum dado disponível após aplicar os filtros.")
+        mapa = folium.Map(location=[-15.0, -55.0], zoom_start=4.2)
+        mapa.save("mapa_interativo.html")
+        imgkit.from_file("mapa_interativo.html", "mapa.png")
+        return "mapa.png"
 
-# Mescla os dados de magnitudes com os estados, preenchendo com 0 para estados não encontrados
-estados_df = estados_df.merge(gerlmtd, on='estado', how='left').fillna(0)
+    # Criar o mapa base com zoom ajustado
+    mapa = folium.Map(location=[-15.0, -55.0], zoom_start=4.2)
 
-# Cria o mapa centrado no Brasil
-mapa_brasil = folium.Map(location=[-14.2350, -51.9253], zoom_start=4)
+    # Cores para os tipos de restrição
+    cores = {
+        "CNF": "#FF6347",  # Vermelho
+        "ENE": "#FFD700",  # Amarelo
+        "REL": "#1E90FF",  # Azul
+    }
 
-# Adiciona círculos ao mapa apenas se a magnitude for maior que 0
-for index, row in estados_df.iterrows():
-    latitude = row['lat']
-    longitude = row['lon']
-    magnitude = row['magnitude']
+    # Agrupar os dados por usina e tipo de corte
+    usinas_agrupadas = (
+        df.groupby(['nom_usina', 'Latitude', 'Longitude', 'cod_razaorestricao'])
+        .agg({'geracao_frustrada': 'sum'})
+        .reset_index()
+    )
 
-    if magnitude > 0:  # Apenas adiciona se a magnitude for maior que 0
-        # Formata a magnitude com vírgula como separador decimal
-        magnitude_formatada = str(magnitude).replace('.', ',') + ' MVA'
-        
-        folium.CircleMarker(
-            location=(latitude, longitude),
-            radius=magnitude / 50000,  # Ajuste o raio conforme necessário
-            color='blue',
-            fill=True,
-            fill_color='blue',
-            fill_opacity=0.6,
-            popup=f'{row["estado"]}: {magnitude_formatada}'
-        ).add_to(mapa_brasil)
+    # Calcular escala para o tamanho dos gráficos
+    geracao_total = (
+        usinas_agrupadas.groupby(['nom_usina', 'Latitude', 'Longitude'])
+        .agg({'geracao_frustrada': 'sum'})
+        .reset_index()
+    )
 
-# Exibe o mapa
-mapa_brasil.save("mapa_cortes.html")
-'''
-'''
-#Separando por cores distintas razões de restrição
+    min_geracao = geracao_total['geracao_frustrada'].min()
+    max_geracao = geracao_total['geracao_frustrada'].max()
 
-cor_restricao = {
-    'REL': 'red',  # INDISPONIBILIDADE EXTERNA
-    'CNF': 'orange',  # CONFIABILIDADE
-    'ENE': 'green',  # RAZÃO ENERGÉTICA
-    'PAR': 'blue'    # PARECER DE ACESSO
-}
+    def calcular_tamanho(geracao):
+        """Função para calcular tamanho baseado na geração frustrada."""
+        tamanho_min = 0.6  # Raio mínimo
+        tamanho_max = 1.5  # Raio máximo
+        if max_geracao == min_geracao:
+            return tamanho_min  # Caso extremo: todas as usinas têm a mesma geração
+        return tamanho_min + (tamanho_max - tamanho_min) * ((geracao - min_geracao) / (max_geracao - min_geracao))
 
-# Mapeia a razão de restrição para as cores
-df['cor'] = df['cod_razaorestricao'].map(cor_restricao)
+    for usina, group in usinas_agrupadas.groupby(['nom_usina', 'Latitude', 'Longitude']): 
+        nome_usina, lat, lon = usina
 
-# Cria o mapa centrado no Brasil
-mapa_brasil = folium.Map(location=[-14.2350, -51.9253], zoom_start=4)
+        # Dados para o gráfico de setores
+        geracao_por_corte = group.set_index('cod_razaorestricao')['geracao_frustrada']
+        geracao_total_usina = geracao_por_corte.sum()
 
-# Adiciona círculos ao mapa apenas se a magnitude for maior que 0
-for index, row in estados_df.iterrows():
-    latitude = row['lat']
-    longitude = row['lon']
-    magnitude = row['magnitude']
-    
-    # Verifica se há registros na base de dados para a razão de restrição
-    restricao = df.loc[df['nom_estado'] == row['estado'], 'cod_razaorestricao']
-    restricao = restricao.dropna()
-    # Ignora estados sem restrição
-    if restricao.empty:
-        continue  # Ignora se não houver restrição
-    
-     # Itera sobre todas as restrições do estado
-    for restricao_codigo in restricao:
-    
-        # Verifica se o código de restrição está no dicionário de cores
-        if restricao_codigo in cor_restricao:
-            cor = cor_restricao[restricao_codigo]
-        else:
-            print(f"Código de restrição {restricao_codigo} não encontrado nas cores.")
-            continue  # Ignora se o código não estiver no dicionário de cores
-    
-        if magnitude > 0:  # Apenas adiciona se a magnitude for maior que 0
-            # Formata a magnitude com vírgula como separador decimal
-            magnitude_formatada = str(magnitude).replace('.', ',') + ' MVA'
-            
-            folium.CircleMarker(
-                location=(latitude, longitude),
-                radius=magnitude / 50000,  # Ajuste o raio conforme necessário
-                color=cor,
-                fill=True,
-                fill_color=cor,
-                fill_opacity=0.6,
-                popup=f'{row["estado"]}: {magnitude_formatada} (Restrição: {restricao_codigo})'
-            ).add_to(mapa_brasil)
+        # Ignorar usinas sem dados ou com geração frustrada igual a zero
+        if geracao_total_usina == 0 or geracao_por_corte.isnull().any():
+            continue
 
-# Adiciona uma legenda ao mapa
-legend_html = """
-    <div style="position: fixed; 
-                bottom: 50px; left: 50px; width: 150px; height: 100px; 
-                background-color: white; opacity: .8; z-index:9999; 
-                font-size:14px; padding: 10px;">
-        <b>Legenda</b><br>
-        <i style="color:red;">●</i> INDISPONIBILIDADE EXTERNA (REL)<br>
-        <i style="color:orange;">●</i> CONFIABILIDADE (CNF)<br>
-        <i style="color:green;">●</i> RAZÃO ENERGÉTICA (ENE)<br>
-        <i style="color:blue;">●</i> PARECER DE ACESSO (PAR)<br>
-        <i style="color:gray;">●</i> Sem restrição
+        # Calcular o tamanho do gráfico
+        tamanho_base = calcular_tamanho(geracao_total_usina)
+
+        # Criar o gráfico de setores
+        fig, ax = plt.subplots(figsize=(tamanho_base, tamanho_base), dpi=100)
+        ax.pie(
+            geracao_por_corte,
+            labels=None,  # Remove rótulos do gráfico
+            colors=[cores.get(tipo, "gray") for tipo in geracao_por_corte.index],
+            autopct=lambda pct: f"{pct:.1f}%" if pct > 5 else "",  # Percentuais >5%
+        )
+        plt.axis('equal')
+
+        # Salvar o gráfico como imagem base64
+        img_buffer = BytesIO()
+        plt.savefig(img_buffer, format='png', bbox_inches='tight', transparent=True)
+        plt.close(fig)
+        img_buffer.seek(0)
+        img_base64 = base64.b64encode(img_buffer.read()).decode()
+
+        # Adicionar o gráfico ao mapa como um DivIcon escalável
+        folium.Marker(
+            location=[lat, lon],
+            icon=folium.DivIcon(
+                html=f"""
+                <div style="
+                    transform: translate(-50%, -50%) scale(0.8);
+                    position: fixed; 
+                    width: {tamanho_base * 50}px; 
+                    height: {tamanho_base * 50}px;">
+                    <img src="data:image/png;base64,{img_base64}" 
+                         style="width: 100%; height: 100%; border-radius: 50%;">
+                </div>
+                """
+            ),
+            popup=(f"<b>Usina:</b> {nome_usina}<br>"
+                   f"<b>Total Geração Frustrada:</b> {geracao_total_usina:.2f}"),
+        ).add_to(mapa)
+
+    # Adicionar legenda
+    legend_html = """
+    <div style="
+        position: fixed;
+        bottom: 50px;
+        left: 50px;
+        width: 250px;
+        height: 140px;
+        background-color: white;
+        border:2px solid grey;
+        z-index:9999;
+        font-size:14px;
+        padding: 10px;
+    ">
+        <b>Legenda:</b><br>
+        <i style="background: #FF6347; width: 10px; height: 10px; display: inline-block;"></i> CNF<br>
+        <i style="background: #FFD700; width: 10px; height: 10px; display: inline-block;"></i> ENE<br>
+        <i style="background: #1E90FF; width: 10px; height: 10px; display: inline-block;"></i> REL<br>
     </div>
-"""
-mapa_brasil.get_root().html.add_child(folium.Element(legend_html))
+    """
+    mapa.get_root().html.add_child(folium.Element(legend_html))
 
-# Exibe o mapa
-mapa_brasil.save("mapa_cortes_restricoes.html")
-'''
+    # Adicionar o botão para voltar à página de filtros
+    button_html = """
+    <div style="
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        z-index: 9999;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    " onclick="window.location.href='http://127.0.0.1:8001/filtros';">
+        Voltar para Filtros
+    </div>
+    """
+
+    mapa.get_root().html.add_child(folium.Element(button_html))
+
+    # Salvar o mapa interativo
+    dir_mapas = os.path.join(os.getcwd(), 'www')
+    if not os.path.exists(dir_mapas):
+        os.makedirs(dir_mapas)
+    
+    mapa_html = os.path.join(dir_mapas, 'mapa_interativo.html')
+    
+    # Excluir o arquivo antigo, se existir
+    if os.path.exists(mapa_html):
+        os.remove(mapa_html)
+        
+    mapa.save(mapa_html)
+
+    return mapa_html
+
+
+

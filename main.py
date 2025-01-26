@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import download_coff as d_coff
 import subprocess
 
 # Função para exibir a seleção do dashboard

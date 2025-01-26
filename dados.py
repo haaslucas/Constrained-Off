@@ -73,7 +73,8 @@ def read_csv():
     )
     df['Geracao MWh'] = df['val_geracao']/2 #Geração em MWh é a geração média (dada em intervalos de 30 min) / 2
     df['Geracao frustrada MWh'] = df['geracao_frustrada']/2
-    df.to_parquet('dataframeFV.parquet', index=False)
+    df.to_parquet('dataframeFV.parquet', index=False)    
+   
     return df
 
 def read_csvEOL():
@@ -152,16 +153,43 @@ file_pathEOL = os.path.join(script_dir, 'dataframeEOL.parquet')
 if os.path.exists(file_pathFV) and not manager.downloadrealizadoFV:
     # Carrega o DataFrame se o arquivo já existir
     df = pd.read_parquet(file_pathFV)
+    dfcoordsUFV = pd.read_csv('usinascoordsUFV.csv')
+    df = df.merge(dfcoordsUFV, on='nom_usina', how='left')
+
+    # Garantir que as colunas de latitude e longitude estejam no formato numérico (float)
+    df['Latitude'] = pd.to_numeric(df['Latitude'], errors='coerce')
+    df['Longitude'] = pd.to_numeric(df['Longitude'], errors='coerce')
     print("DataFrame carregado a partir do arquivo existente.")
+    
 else:
     print("Arquivos base foram atualizados, carregando novos dados...")
     df = read_csv()
+    dfcoordsUFV = pd.read_csv('usinascoordsUFV.csv')
+    df = df.merge(dfcoordsUFV, on='nom_usina', how='left')
 
+    # Garantir que as colunas de latitude e longitude estejam no formato numérico (float)
+    df['Latitude'] = pd.to_numeric(df['Latitude'], errors='coerce')
+    df['Longitude'] = pd.to_numeric(df['Longitude'], errors='coerce')
+    
 if os.path.exists(file_pathEOL) and not manager.downloadrealizadoEOL:
     # Carrega o DataFrame se o arquivo já existir
     dfEOL = pd.read_parquet(file_pathEOL)
+   
+    dfcoordsEOL = pd.read_csv('usinascoords.csv')
+    dfEOL = dfEOL.merge(dfcoordsEOL, on='nom_usina', how='left')
+
+    # Garantir que as colunas de latitude e longitude estejam no formato numérico (float)
+    dfEOL['Latitude'] = pd.to_numeric(dfEOL['Latitude'], errors='coerce')
+    dfEOL['Longitude'] = pd.to_numeric(dfEOL['Longitude'], errors='coerce')
     print("DataFrame carregado a partir do arquivo existente.")
 else:
     print("Arquivos base foram atualizados, carregando novos dados...")
     dfEOL = read_csvEOL()
-    
+    dfcoordsEOL = pd.read_csv('usinascoords.csv')
+    dfEOL = dfEOL.merge(dfcoordsEOL, on='nom_usina', how='left')
+
+    # Garantir que as colunas de latitude e longitude estejam no formato numérico (float)
+    dfEOL['Latitude'] = pd.to_numeric(dfEOL['Latitude'], errors='coerce')
+    dfEOL['Longitude'] = pd.to_numeric(dfEOL['Longitude'], errors='coerce')
+ 
+

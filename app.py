@@ -1,6 +1,6 @@
 from graficos import (
     total_por_estado,
-    percentuais_por_tipo, percentuais_por_estado, percentuais_por_regiao, corte_por_estado, total_por_tipo
+    percentuais_por_tipo, percentuais_por_estado, percentuais_por_regiao, corte_por_estado, total_por_tipo_normalizado
 )
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,8 +8,40 @@ from shiny import run_app
 import pandas as pd
 from shiny import App, render, reactive, ui
 from dados import df
+import subprocess
+import webbrowser
+import threading
+import time
+import requests
 
-print('Iniciando aplicativo...')
+# Função para iniciar o servidor Starlette
+def iniciar_servidor_starlette():
+    # Construa a URL do servidor Starlette com os parâmetros de filtro
+    url = "http://127.0.0.1:8001/filtros"
+    # Execute o servidor Starlette em um subprocesso
+    subprocess.Popen(["python", "starlette_server.py"])
+    print("Aguardando o servidor iniciar...")
+    for _ in range(30):  # Tenta por até 30 segundos
+        try:
+            # Verifica se o servidor responde
+            response = requests.get(url)
+            if response.status_code == 200:
+                print("Servidor iniciado com sucesso!")
+                break
+        except requests.ConnectionError:
+            pass
+        time.sleep(1)  # Aguarda 1 segundo antes de tentar novamente
+    else:
+        print("Erro: Não foi possível conectar ao servidor.")
+        return
+    # Abra o URL no navegador padrão
+    webbrowser.open(url)
+
+
+def iniciar_servidor_shiny():
+    run_app(App(app_ui, server), host="127.0.0.1", port=8000)
+    webbrowser.open("http://127.0.0.1:8000")
+    
 app_ui = ui.page_fluid(
     ui.h2("Constrained Off de Usinas Fotovoltaicas - Dados Abertos ONS"),
     
@@ -31,14 +63,14 @@ app_ui = ui.page_fluid(
             ui.output_plot("total"),
             ui.output_plot("total_estado"),
             ui.output_plot("corte_estado"),
-            ui.output_plot("media_diaria")
+            ui.output_plot("media_diaria"),
         ),
 
         # Aba Comparativos
         ui.nav_panel(
             "Comparativos",
             ui.h3("Comparação de Usinas"),
-            # Filtros organizados conforme solicitado
+            # Filtros organizados em colunas
             ui.row(
                 ui.column(4, ui.input_select("estado1", "Estado (Usina 1):", choices=["Todos"] + list(df['nom_estado'].unique()))),
                 ui.column(4, ui.input_select("estado2", "Estado (Usina 2):", choices=["Todos"] + list(df['nom_estado'].unique()))),
@@ -56,7 +88,7 @@ app_ui = ui.page_fluid(
 )
 
 def server(input, output, session):
-    
+     
     
     @reactive.Effect #Atualiza o filtro de Usina de acordo com o estado selecionado
     @reactive.event(input.estado)
@@ -368,7 +400,7 @@ def server(input, output, session):
                 df_usina = df_filtrado[df_filtrado['nom_usina'] == usina]
     
                 # Calcula a soma da geração frustrada por tipo de restrição
-                geracao_por_restricao = total_por_tipo(df_usina)
+                geracao_por_restricao = total_por_tipo_normalizado(df_usina)
                 
                 # Preenche os dados para cada categoria (restrição)
                 usina_dados = [geracao_por_restricao.get(r, 0) for r in categorias]
@@ -408,10 +440,17 @@ def server(input, output, session):
             fig, ax = plt.subplots()
             ax.text(0.5, 0.5, "Sem dados para exibir", ha='center', va='center')
             return fig
-        
-        
-# Inicializa o app
-app = App(app_ui, server)
-# Roda o app se esse código está sendo executado diretamente
+
+    
 if __name__ == "__main__":
-    run_app(app)
+    thread_starlette = threading.Thread(target=iniciar_servidor_starlette())
+    thread_shiny = threading.Thread(target=iniciar_servidor_shiny)
+
+    # Iniciar ambas as threads
+    thread_starlette.start()
+    thread_shiny.start()
+
+    # Aguardar as threads terminarem (opcional, apenas se necessário)
+    thread_starlette.join()
+    thread_shiny.join()
+
