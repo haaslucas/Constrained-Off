@@ -13,6 +13,7 @@ def corte_por_estado(df):
     return df.groupby(['nom_estado', 'Mes', 'cod_razaorestricao'])['Corte %'].mean().reset_index()
     
 
+
 def total_por_estado(df):
     return df.groupby(['nom_estado', 'Mes', 'cod_razaorestricao', 'nom_usina'])['Geracao frustrada MWh'].sum().reset_index()
 
@@ -61,6 +62,12 @@ def percentuais_por_hora(df):
     hora = df[df['geracao_frustrada'].notna() & (df['geracao_frustrada'] != 0)].groupby('Hora')['geracao_frustrada'].count()
     hora_total = hora.sum()
     return ((hora / hora_total) * 100).map(lambda x: f'{x:.2f}%').reset_index()
+
+# Função para calcular o total de Geração Frustrada MWh
+def calcular_geracao(df_filtrado, data_inicio, data_fim):
+    df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]
+    soma_geracao = df_filtrado['Geracao frustrada MWh'].sum()
+    return soma_geracao
 
 
 import matplotlib.pyplot as plt

@@ -1,6 +1,6 @@
 from graficos import (
     total_por_estado,
-    percentuais_por_tipo, percentuais_por_estado, percentuais_por_regiao, corte_por_estado, total_por_tipo_normalizado
+    percentuais_por_tipo, percentuais_por_estado, percentuais_por_regiao, corte_por_estado, total_por_tipo_normalizado, calcular_geracao
 )
 import matplotlib.pyplot as plt
 import numpy as np
@@ -56,7 +56,14 @@ app_ui = ui.page_fluid(
             ui.row(
                 ui.column(3, ui.input_select("estado", "Selecione o Estado:", choices=["Todos"] + list(dfEOL['nom_estado'].unique()))),
                 ui.column(3, ui.input_select("tipo_restricao", "Selecione a Restrição:", choices=["Todos"] + list(dfEOL['cod_razaorestricao'].dropna().unique()))),
-                ui.column(3, ui.input_select("usina", "Selecione a Usina:", choices=["Todos"]))
+                ui.column(3, ui.input_select("usina", "Selecione a Usina:", choices=["Todos"])),
+                ui.column(3, 
+                          ui.input_slider("data_slider", "Selecione o Período:", 
+                                          min = min(dfEOL['Dia']), 
+                                          max = max(dfEOL['Dia']), 
+                                          value = [min(dfEOL['Dia']), max(dfEOL['Dia'])], 
+                                          step=1)
+                )
             ),
             ui.row(
                 ui.column(4, ui.output_plot("por_tipo")),
@@ -66,7 +73,8 @@ app_ui = ui.page_fluid(
             ui.output_plot("total"),
             ui.output_plot("total_estado"),
             ui.output_plot("corte_estado"),
-            ui.output_plot("media_diaria")
+            ui.output_plot("media_diaria"),
+            ui.output_text("geracao_frustrada")
         ),
 
         # Aba Comparativos
@@ -399,6 +407,30 @@ def server(input, output, session):
         )
     
         return fig
+    
+    @output()
+    @render.text
+    def geracao_frustrada():
+        
+        df_filtrado = dfEOL
+
+        if input.estado() != "Todos":
+            df_filtrado = df_filtrado[df_filtrado['nom_estado'] == input.estado()]
+        
+        if input.tipo_restricao() != "Todos":
+            df_filtrado = df_filtrado[df_filtrado['cod_razaorestricao'] == input.tipo_restricao()]
+        
+        if input.usina() != "Todos":
+            df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
+            
+        data_inicio = input.data_slider()[0]
+        data_fim = input.data_slider()[1]
+
+        # Calcular a geração frustrada MWh no período selecionado
+        soma_geracao = calcular_geracao(df_filtrado, data_inicio, data_fim)
+        
+        # Exibir o resultado como texto
+        return f"Total de Geração Frustrada MWh entre {data_inicio.strftime('%Y-%m-%d')} e {data_fim.strftime('%Y-%m-%d')} é: {soma_geracao}"
     
     @output
     @render.plot

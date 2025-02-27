@@ -43,7 +43,7 @@ def read_csv():
 
     # Preenchimento da Geração Frustrada
     df['geracao_frustrada'] = np.where(
-        df['val_geracaolimitada'] != 0,  # Se geração limitada não é zero
+        df['val_geracaolimitada'] != 0 & pd.notna(df['val_geracaolimitada']),  # Se geração limitada não é zero
         np.where(
             df['val_geracaoreferencia'] > df['val_geracao'],  # Se val_geracaoreferencia > val_geracao
             df['val_geracaoreferencia'] - df['val_geracao'],  # Então geracao_frustada = val_geracaoreferencia - val_geracao
@@ -111,7 +111,7 @@ def read_csvEOL():
 
     # Preenchimento da Geração Frustrada
     df['geracao_frustrada'] = np.where(
-        df['val_geracaolimitada'] != 0,  # Se geração limitada não é zero
+        df['val_geracaolimitada'] != 0 & pd.notna(df['val_geracaolimitada']),  # Se geração limitada não é zero
         np.where(
             df['val_geracaoreferencia'] > df['val_geracao'],  # Se val_geracaoreferencia > val_geracao
             df['val_geracaoreferencia'] - df['val_geracao'],  # Então geracao_frustada = val_geracaoreferencia - val_geracao
