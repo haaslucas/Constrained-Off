@@ -1,5 +1,5 @@
 from graficos import (
-    total_por_estado,
+    total_por_estado, total_por_estado_dia,
     percentuais_por_tipo, percentuais_por_estado, percentuais_por_regiao, corte_por_estado, total_por_tipo_normalizado, calcular_geracao
 )
 import matplotlib.pyplot as plt
@@ -54,13 +54,8 @@ app_ui = ui.page_fluid(
                 ui.column(3, ui.input_select("estado", "Selecione o Estado:", choices=["Todos"] + list(df['nom_estado'].unique()))),
                 ui.column(3, ui.input_select("tipo_restricao", "Selecione a Restrição:", choices=["Todos"] + list(df['cod_razaorestricao'].dropna().unique()))),
                 ui.column(3, ui.input_select("usina", "Selecione a Usina:", choices=["Todos"])),
-                ui.column(3, 
-                          ui.input_slider("data_slider", "Selecione o Período:", 
-                                          min = min(df['Dia']), 
-                                          max = max(df['Dia']), 
-                                          value = [min(df['Dia']), max(df['Dia'])], 
-                                          step=1)
-                )
+                ui.input_date("data_inicio", "Data de Início:", value=min(df['Dia'])),
+                ui.input_date("data_fim", "Data Final:", value=max(df['Dia']))
             ),
             ui.row(
                 ui.column(4, ui.output_plot("por_tipo")),
@@ -68,6 +63,7 @@ app_ui = ui.page_fluid(
                 ui.column(4, ui.output_plot("por_estado"))
             ),
             ui.output_plot("total"),
+            ui.output_plot("total_diario"),
             ui.output_plot("total_estado"),
             ui.output_plot("corte_estado"),
             ui.output_plot("media_diaria"),
@@ -190,6 +186,66 @@ def server(input, output, session):
     
     @output
     @render.plot
+    def total_diario():
+        df_filtrado = df  # Não há filtros inicialmente
+
+        # Aplica filtro por estado se não for "Todos"
+        if input.estado() != "Todos":
+            df_filtrado = df_filtrado[df_filtrado['nom_estado'] == input.estado()]
+
+        # Aplica filtro por tipo de restrição se não for "Todos"
+        if input.tipo_restricao() != "Todos":
+            df_filtrado = df_filtrado[df_filtrado['cod_razaorestricao'] == input.tipo_restricao()]
+
+        # Aplica filtro por usina se não for "Todos"
+        if input.usina() != "Todos":
+            df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
+
+        # Filtro de data
+        data_inicio = input.data_inicio()
+        data_fim = input.data_fim()
+        df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]
+
+        # Verifica se o intervalo é maior que 45 dias
+        if (data_fim - data_inicio).days > 62:
+            fig, ax = plt.subplots(figsize=(12, 6))
+            ax.text(0.5, 0.5, 'Selecione um intervalo menor de dias para os dados diários',
+                    horizontalalignment='center', verticalalignment='center',
+                    transform=ax.transAxes, fontsize=14, color='red')
+            ax.axis('off')  # Remove os eixos
+            return fig
+
+        # Aplicando a função de agregação
+        media = total_por_estado_dia(df_filtrado)
+
+        # Convertendo 'Dia' para datetime para ordenação
+        media['Dia'] = pd.to_datetime(media['Dia'], format='%Y-%m-%d')
+        media = media.sort_values('Dia')
+
+        # Agrupando por 'Dia' e 'cod_razaorestricao', somando as gerações por restrição para o dia
+        media_agrupada = media.groupby(['Dia', 'cod_razaorestricao'])['Geracao frustrada MWh'].sum().unstack(fill_value=0)
+
+        # Configurando o gráfico
+        fig, ax = plt.subplots(figsize=(12, 6))
+        media_agrupada.plot(kind='bar', ax=ax, stacked=True, width=0.8)
+
+        # Títulos e rótulos
+        ax.set_title('Total de Geração Frustrada por Dia e Tipo de Restrição')
+        ax.set_xlabel('Dia')
+        ax.set_ylabel('Geração Frustrada [MWh]')
+
+        # Ajustando os rótulos do eixo x para mostrar a data
+        ax.set_xticks(range(len(media_agrupada.index)))
+        ax.set_xticklabels(media_agrupada.index.strftime('%d-%m-%Y'), rotation=45)
+
+        # Adicionando legenda e layout
+        ax.legend(title='Tipo de Restrição', bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.tight_layout()
+
+        return fig    
+    
+    @output
+    @render.plot
     def total_estado():
         df_filtrado = df #Não há filtros inicialmente
     
@@ -204,6 +260,11 @@ def server(input, output, session):
         # Aplica filtro por usina se não for "Todos"
         if input.usina() != "Todos":
             df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
+            
+        # Filtro de data
+        data_inicio = input.data_inicio()
+        data_fim = input.data_fim()
+        df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]            
     
         # Calculando o total por estado e mês
         media = total_por_estado(df_filtrado)
@@ -250,6 +311,11 @@ def server(input, output, session):
         # Aplica filtro por usina se não for "Todos"
         if input.usina() != "Todos":
             df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
+
+        # Filtro de data
+        data_inicio = input.data_inicio()
+        data_fim = input.data_fim()
+        df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]
             
         media = corte_por_estado(df_filtrado)
         
@@ -277,6 +343,11 @@ def server(input, output, session):
             df_filtrado = df
         else:
             df_filtrado = df[df['nom_estado'] == input.estado()]
+            
+        # Filtro de data
+        data_inicio = input.data_inicio()
+        data_fim = input.data_fim()
+        df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]            
             
         if input.usina() == "Todos":
         # Todas as usinas selecionadas pega a média geral
@@ -332,6 +403,11 @@ def server(input, output, session):
             df_filtrado = df_filtrado[df_filtrado['cod_razaorestricao'] == input.tipo_restricao()]
         if input.usina() != "Todos":
             df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
+
+        # Filtro de data
+        data_inicio = input.data_inicio()
+        data_fim = input.data_fim()
+        df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]
         
         dados_pizza = percentuais_por_tipo(df_filtrado)
         labels = dados_pizza['cod_razaorestricao']
@@ -353,6 +429,11 @@ def server(input, output, session):
             df_filtrado = df_filtrado[df_filtrado['cod_razaorestricao'] == input.tipo_restricao()]
         if input.usina() != "Todos":
             df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
+
+        # Filtro de data
+        data_inicio = input.data_inicio()
+        data_fim = input.data_fim()
+        df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]
         
         dados_pizza = percentuais_por_regiao(df_filtrado)
         labels = dados_pizza['id_subsistema']
@@ -374,6 +455,11 @@ def server(input, output, session):
             df_filtrado = df_filtrado[df_filtrado['cod_razaorestricao'] == input.tipo_restricao()]
         if input.usina() != "Todos":
             df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
+
+        # Filtro de data
+        data_inicio = input.data_inicio()
+        data_fim = input.data_fim()
+        df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]
         
         dados_pizza = percentuais_por_estado(df_filtrado)
         labels = dados_pizza['nom_estado']
@@ -400,8 +486,9 @@ def server(input, output, session):
         if input.usina() != "Todos":
             df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
             
-        data_inicio = input.data_slider()[0]
-        data_fim = input.data_slider()[1]
+        # Filtro de data
+        data_inicio = input.data_inicio()
+        data_fim = input.data_fim()
 
         # Calcular a geração frustrada MWh no período selecionado
         soma_geracao = calcular_geracao(df_filtrado, data_inicio, data_fim)

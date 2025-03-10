@@ -12,10 +12,11 @@ def media_por_estado(df):
 def corte_por_estado(df):
     return df.groupby(['nom_estado', 'Mes', 'cod_razaorestricao'])['Corte %'].mean().reset_index()
     
-
-
 def total_por_estado(df):
     return df.groupby(['nom_estado', 'Mes', 'cod_razaorestricao', 'nom_usina'])['Geracao frustrada MWh'].sum().reset_index()
+
+def total_por_estado_dia(df):
+    return df.groupby(['nom_estado', 'Dia', 'cod_razaorestricao', 'nom_usina'])['Geracao frustrada MWh'].sum().reset_index()
 
 def media_por_estado_hora(df):
     return df.groupby(['nom_estado', 'Hora'])['geracao_frustrada'].mean().reset_index()

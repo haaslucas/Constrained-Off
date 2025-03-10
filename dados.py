@@ -80,7 +80,7 @@ def read_csv():
 def read_csvEOL():
     dfs = [] #Lista base contendo todos os DataFrames
     base_dir = os.path.dirname(os.path.abspath(__file__)) #Extrai como base o diretório onde o script é executado
-    arquivos = os.path.join(base_dir, 'Arquivos', 'Eólica') #Busca todos os arquivos da pasta 'Fotovoltaica'
+    arquivos = os.path.join(base_dir, 'Arquivos', 'Eólica') #Busca todos os arquivos da pasta 'Eólica'
     for arquivo in os.listdir(arquivos): #Varre todos os arquivos da pasta
         if arquivo.endswith('.csv'):
             caminho_arquivo = os.path.join(arquivos, arquivo)
