@@ -16,12 +16,12 @@ def selecionar_dashboard():
 def executar_dashboard(escolha):
     if escolha == "1":
         print("Executando o dashboard de Constrained off das Usinas Eolicas...")
-        subprocess.run(["python", "dados.py"])
+        #subprocess.run(["python", "dados.py"])
         subprocess.run(["python", "appEOL.py"])
     elif escolha == "2":
         print("Executando o dashboard Constrained off das Usinas Fotovoltaicas...")
         # Executa o script app.py
-        subprocess.run(["python", "dados.py"])
+        #subprocess.run(["python", "dados.py"])
         subprocess.run(["python", "app.py"])
     else:
         print("Valor invalido. Tente novamente.")

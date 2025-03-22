@@ -155,6 +155,12 @@ def server(input, output, session):
         if input.usina() != "Todos":
             df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
 
+        # Filtro de data
+        data_inicio = input.data_inicio()
+        data_fim = input.data_fim()
+        df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]
+
+
         # Aplicando a função de agregação
         media = total_por_estado(df_filtrado)
 
