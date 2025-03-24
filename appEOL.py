@@ -307,7 +307,7 @@ def server(input, output, session):
     @render.plot
     def corte_estado():
         
-        df_filtrado = dfEOL #Não há filtros inicialmente
+        df_filtrado = dfEOL  # Não há filtros inicialmente
     
         # Aplica filtro por estado se não for "Todos"
         if input.estado() != "Todos":
@@ -316,34 +316,50 @@ def server(input, output, session):
         # Aplica filtro por tipo de restrição se não for "Todos"
         if input.tipo_restricao() != "Todos":
             df_filtrado = df_filtrado[df_filtrado['cod_razaorestricao'] == input.tipo_restricao()]
-
+    
         # Aplica filtro por usina se não for "Todos"
         if input.usina() != "Todos":
             df_filtrado = df_filtrado[df_filtrado['nom_usina'] == input.usina()]
-
+    
         # Filtro de data
         data_inicio = input.data_inicio()
         data_fim = input.data_fim()
         df_filtrado = df_filtrado[(df_filtrado['Dia'] >= data_inicio) & (df_filtrado['Dia'] <= data_fim)]
-            
+        
         media = corte_por_estado(df_filtrado)
+        
+        # Certificando-se de que 'Mes' está em um formato de string adequado antes de convertê-lo
+        # Se o formato for 'abr 2022' (ou seja, abreviação do mês seguido pelo ano)
+        media['Mes'] = pd.to_datetime(media['Mes'], format='%b %Y')
         
         # Criando a tabela pivot para plotar o gráfico, com 'Mes' no eixo x e 'nom_estado' como categorias
         df_pivot = media.pivot_table(index='Mes', columns='nom_estado', values='Corte %')
+    
+        # Ordenando pela data de forma correta
+        df_pivot = df_pivot.sort_index()
+    
         # Criando o gráfico com matplotlib
         fig, ax = plt.subplots(figsize=(10, 6))
-        # Plotar o gráfico de barras, com cada estado sendo uma cor diferente
+    
+        # Plotando o gráfico de barras, com cada estado sendo uma cor diferente
         df_pivot.plot(kind='bar', ax=ax, stacked=False)
+    
         # Ajustes do gráfico
         ax.set_title('Média de Geração Frustrada por Estado e Mês - Valores %')
         ax.set_xlabel('Mês')
-        ax.set_ylabel('Corte % (em função da disponibilidade)')       
+        ax.set_ylabel('Corte % (em função da disponibilidade)')
+        
+        
+        # Formatando o eixo x para exibir apenas o mês e o ano
+        ax.set_xticklabels(df_pivot.index.strftime('%b %Y'), rotation=45)
+    
         # Adicionar legenda e ajustar layout
         ax.legend(title='Estados', bbox_to_anchor=(1.05, 1), loc='upper left')
         plt.tight_layout()
-
-        return fig
     
+        return fig
+
+        
     @output
     @render.plot
     def media_diaria():

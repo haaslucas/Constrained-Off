@@ -325,8 +325,12 @@ def server(input, output, session):
             
         media = corte_por_estado(df_filtrado)
         
+        df_filtrado['Mes'] = pd.to_datetime(df_filtrado['Mes'], format='%b %Y')    
+        
         # Criando a tabela pivot para plotar o gráfico, com 'Mes' no eixo x e 'nom_estado' como categorias
         df_pivot = media.pivot_table(index='Mes', columns='nom_estado', values='Corte %')
+        
+        df_pivot = df_pivot.sort_index()
         # Criando o gráfico com matplotlib
         fig, ax = plt.subplots(figsize=(10, 6))
         # Plotar o gráfico de barras, com cada estado sendo uma cor diferente
@@ -334,7 +338,9 @@ def server(input, output, session):
         # Ajustes do gráfico
         ax.set_title('Média de Geração Frustrada por Estado e Mês - Valores %')
         ax.set_xlabel('Mês')
-        ax.set_ylabel('Corte % (em função da disponibilidade)')       
+        ax.set_ylabel('Corte % (em função da disponibilidade)')
+        # Formatando o eixo x para exibir apenas o mês e o ano
+        ax.set_xticklabels(df_pivot.index.strftime('%b %Y'), rotation=45)
         # Adicionar legenda e ajustar layout
         ax.legend(title='Estados', bbox_to_anchor=(1.05, 1), loc='upper left')
         plt.tight_layout()
