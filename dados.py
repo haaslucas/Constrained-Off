@@ -174,7 +174,7 @@ else:
 if os.path.exists(file_pathEOL) and not manager.downloadrealizadoEOL:
     # Carrega o DataFrame se o arquivo já existir
     dfEOL = pd.read_parquet(file_pathEOL)
-   
+
     dfcoordsEOL = pd.read_csv('usinascoords.csv')
     dfEOL = dfEOL.merge(dfcoordsEOL, on='nom_usina', how='left')
 
@@ -191,5 +191,5 @@ else:
     # Garantir que as colunas de latitude e longitude estejam no formato numérico (float)
     dfEOL['Latitude'] = pd.to_numeric(dfEOL['Latitude'], errors='coerce')
     dfEOL['Longitude'] = pd.to_numeric(dfEOL['Longitude'], errors='coerce')
- 
+
 

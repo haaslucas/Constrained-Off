@@ -1,0 +1,761 @@
+{
+    "Banabuiú": {
+        "corte_subestacao": 4.073881447422877,
+        "corte_por_conjunto_fv": {
+            "conj. banabuiú": 4.073881447422876
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Araxá 4": {
+        "corte_subestacao": 2.993524868845843,
+        "corte_por_conjunto_fv": {
+            "conj. araxá": 2.993524868845843
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Pindaí II": {
+        "corte_subestacao": 4.086334496855773,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. pindaí ii 230 kv": 17.097845963834608,
+            "conj. pelourinho": 4.887659598807149,
+            "conj. caetité": 4.401189421013931,
+            "conj. gpexpan": 3.846706036108646,
+            "conj. bw guirapá i": 2.8109428499771583,
+            "conj. bw guirapá ii": 2.6344397343323878
+        }
+    },
+    "Janaúba 3": {
+        "corte_subestacao": 5.939062507755263,
+        "corte_por_conjunto_fv": {
+            "conj. janaúba": 5.939062507755263
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Bom Jardim": {
+        "corte_subestacao": 0.3102415345941055,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. bom jardim": 0.3102415345941055
+        }
+    },
+    "Ibiapina II": {
+        "corte_subestacao": 3.1662868607287176,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. cacimbas": 3.5208957369341305,
+            "conj. santa rosália": 3.3475117740666933,
+            "malhadinha 1": 2.630453071185329
+        }
+    },
+    "Paracatu 4": {
+        "corte_subestacao": 3.3501881004236376,
+        "corte_por_conjunto_fv": {
+            "conj. paracatu": 3.599542605006879,
+            "conj. boa sorte": 3.100833595840396
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Bom Nome": {
+        "corte_subestacao": 4.858688777590907,
+        "corte_por_conjunto_fv": {
+            "conj. ciranda": 6.143749316445513,
+            "conj. bom nome": 4.741570679712622,
+            "conj. belmonte": 4.643487281348173,
+            "conj. brígida": 3.894285649382155
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "NaN": {
+        "corte_subestacao": NaN,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {}
+    },
+    "Mossoró IV": {
+        "corte_subestacao": 3.1692550473264935,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. kairos": 7.6454607373338686,
+            "conj. santo inácio": 2.6025374888872563
+        }
+    },
+    "Santa Luzia II": {
+        "corte_subestacao": 1.3219109131098563,
+        "corte_por_conjunto_fv": {
+            "conj. luzia": 1.7058935109401576,
+            "conj. santa luzia ii 500 kv": 1.3700379047549576
+        },
+        "corte_por_conjunto_eol": {
+            "conj. oeste seridó": 3.437405438036613,
+            "conj. chafariz norte": 1.3277251600421696,
+            "conj. serra do seridó": 1.2520980211327206,
+            "conj. chafariz sul ii": 1.1779559429139201,
+            "conj. chafariz sul i": 0.9698581713896016
+        }
+    },
+    "Atlântida 2": {
+        "corte_subestacao": 0.7655570729947989,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "xangri-lá": 0.7655570729947988
+        }
+    },
+    "Caetés II": {
+        "corte_subestacao": 1.9107656715907437,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. caetés ii": 1.9107656715907437
+        }
+    },
+    "Sobral III": {
+        "corte_subestacao": 3.3879515645285037,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "icaraizinho": 3.7715575349336863,
+            "conj. icaraí": 3.6984231880203806,
+            "conj. pedra cheirosa": 3.5132423260469796,
+            "praia formosa": 2.56858320911297
+        }
+    },
+    "Olindina": {
+        "corte_subestacao": 1.7078403154175346,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. tucano": 1.7078403154175346
+        }
+    },
+    "Juazeiro da Bahia II": {
+        "corte_subestacao": 1.5973124408634163,
+        "corte_por_conjunto_fv": {
+            "conj. juazeiro solar 2": 2.8045654147505603,
+            "conj. juazeiro solar": 1.6271520415642806
+        },
+        "corte_por_conjunto_eol": {
+            "conj. delfina": 1.1757184371049034
+        }
+    },
+    "Ceará Mirim II": {
+        "corte_subestacao": 2.4103755865785597,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. rio do vento expansão": 2.521735239054862,
+            "conj. rio do vento": 2.3355193869717445
+        }
+    },
+    "Igaporã II": {
+        "corte_subestacao": 4.222031812365524,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. caetité 123": 5.112786065647689,
+            "conj. igaporã ii": 4.743423104402881,
+            "conj. araçás": 4.603201100808083,
+            "conj. morrão": 4.354065291978168,
+            "conj. curva dos ventos": 3.660156404256622,
+            "conj. caetité a": 2.94956588124658
+        }
+    },
+    "Marmeleiro 2": {
+        "corte_subestacao": 0.334377525463143,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. marmeleiro 2": 0.334377525463143
+        }
+    },
+    "Água Vermelha - Votuporanga II": {
+        "corte_subestacao": 3.0096270670209684,
+        "corte_por_conjunto_fv": {
+            "conj. pedranópolis": 3.009627067020968
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Banabuiú - Mossoró II": {
+        "corte_subestacao": 5.992917815212607,
+        "corte_por_conjunto_fv": {
+            "conj. alex": 5.992917815212607
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Gilbués II": {
+        "corte_subestacao": 4.606128667409972,
+        "corte_por_conjunto_fv": {
+            "conj. gilbués ii 500 kv": 4.606128667409972
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Quixeré": {
+        "corte_subestacao": 6.310750532806052,
+        "corte_por_conjunto_fv": {
+            "conj. calcário": 6.310750532806053
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Jeremoabo": {
+        "corte_subestacao": 2.252599102202332,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. canudos i": 2.252599102202332
+        }
+    },
+    "Dracena": {
+        "corte_subestacao": 2.148985805063078,
+        "corte_por_conjunto_fv": {
+            "conj. dracena": 2.148985805063078
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Barreiras II": {
+        "corte_subestacao": 8.87222904735825,
+        "corte_por_conjunto_fv": {
+            "conj. barreiras ii 500 kv": 8.872229047358251
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Getulina": {
+        "corte_subestacao": 1.6482993642698207,
+        "corte_por_conjunto_fv": {
+            "conj. guaimbê": 1.6482993642698207
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Osório 2": {
+        "corte_subestacao": 0.2582391402444615,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. atlântica": 0.4502502183230723,
+            "conj. lagoa dos barros": 0.2770148037017761,
+            "elebrás cidreira 1": 0.04745239870853602
+        }
+    },
+    "Sol do Sertão": {
+        "corte_subestacao": 8.125457864619076,
+        "corte_por_conjunto_fv": {
+            "conj. sol do sertão": 8.156735937704292
+        },
+        "corte_por_conjunto_eol": {
+            "conj. novo horizonte": 8.09765513298777
+        }
+    },
+    "Ribeiro Gonçalves": {
+        "corte_subestacao": 7.494944289643228,
+        "corte_por_conjunto_fv": {
+            "conj. ribeiro gonçalves": 7.494944289643228
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Morro do Chapéu II": {
+        "corte_subestacao": 2.5072450528024617,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. ventos da bahia": 5.380604290094958,
+            "conj. morro do chapéu sul ii": 4.512221861386489,
+            "conj. serra azul": 2.5400468382152095,
+            "conj. serra da babilônia": 2.402355473175188,
+            "conj. babilônia": 2.2465054899441905,
+            "conj. cristal": 1.7972281883007968,
+            "conj. morro do chapéu sul": 1.0912910766906734
+        }
+    },
+    "Jaíba": {
+        "corte_subestacao": 5.57904618331209,
+        "corte_por_conjunto_fv": {
+            "conj. jaíba v": 8.306424839991365,
+            "conj. sol do cerrado": 4.440712294825188
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Touros": {
+        "corte_subestacao": 3.4050433507142577,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. mundo novo": 5.81137529778794,
+            "conj. gameleira": 3.544981275932837,
+            "conj. carnaúbas": 3.098037801933722,
+            "conj. cutia": 2.644326671216757
+        }
+    },
+    "Francisco Sá 3": {
+        "corte_subestacao": 3.051931669377727,
+        "corte_por_conjunto_fv": {
+            "conj. francisco sá": 3.051931669377728
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Acaraú II": {
+        "corte_subestacao": 2.772636222394508,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. papagaios": 4.322695911186069,
+            "conj. acaraú ii": 4.313268883569588,
+            "conj. itarema v": 2.060205123117161,
+            "cataventos acaraú i": 0.0
+        }
+    },
+    "Garanhuns II": {
+        "corte_subestacao": 1.4386489236460391,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. são clemente": 1.826174975465377,
+            "conj. paranatama": 1.0511228718267012
+        }
+    },
+    "Chapada I": {
+        "corte_subestacao": 1.4590175549580098,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. chapada i": 1.4590175549580096
+        }
+    },
+    "Pirapora 2": {
+        "corte_subestacao": 3.695239169094266,
+        "corte_por_conjunto_fv": {
+            "conj. pirapora 2": 4.377528005700314,
+            "conj. lar do sol": 3.0129503324882174
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Três Irmãos": {
+        "corte_subestacao": 1.0010339969571342,
+        "corte_por_conjunto_fv": {
+            "conj. pereira barreto": 1.0010339969571345
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Bom Nome - Milagres C2": {
+        "corte_subestacao": 4.4911216541113665,
+        "corte_por_conjunto_fv": {
+            "conj. abaiara 230 kv": 4.4911216541113665
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Extremoz II": {
+        "corte_subestacao": 3.4671373160270846,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. riachão": 3.4671373160270846
+        }
+    },
+    "Chapada II": {
+        "corte_subestacao": 1.743025100973238,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. chapada ii": 1.743025100973238
+        }
+    },
+    "Livramento 3": {
+        "corte_subestacao": 0.0026131838468617884,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. livramento 3": 0.002613183846861788
+        }
+    },
+    "João Câmara II": {
+        "corte_subestacao": 2.7806150435650236,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. terra santa": 3.923952305759387,
+            "conj. aventura": 3.7367170648641093,
+            "conj. santa clara": 3.111421303459295,
+            "conj. união dos ventos": 2.910231029366575,
+            "conj. morro dos ventos": 2.7564471108636024,
+            "conj. são miguel": 1.5543782970199511,
+            "conj. modelo": 1.4711581936222458
+        }
+    },
+    "Senhor do Bonfim II": {
+        "corte_subestacao": 2.3269884953791204,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. folha larga sul": 2.5019248451720806,
+            "conj. folha larga": 2.15205214558616
+        }
+    },
+    "Russas II": {
+        "corte_subestacao": 4.515722568222443,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. aracati ii": 5.202518965016117,
+            "conj. pitombeira": 4.229586421460504,
+            "conj. jandaia": 4.115062318190705
+        }
+    },
+    "Manga 3 - Janaúba 1": {
+        "corte_subestacao": 5.034739361527191,
+        "corte_por_conjunto_fv": {
+            "conjunto jaiba 4 dist": 5.034739361527191
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Santa Vitória do Palmar": {
+        "corte_subestacao": 0.4040067619300006,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. santa vitória do palmar": 0.4040067619300007
+        }
+    },
+    "Pirapora 3": {
+        "corte_subestacao": 2.7023682209807003,
+        "corte_por_conjunto_fv": {
+            "conj. varzea da palma": 2.7023682209807003
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Mossoró II": {
+        "corte_subestacao": 6.343202787666712,
+        "corte_por_conjunto_fv": {
+            "conj. floresta": 6.410545690584236
+        },
+        "corte_por_conjunto_eol": {
+            "conj. mossoró ii": 8.612800430972646,
+            "conj. areia branca": 5.997380456395043
+        }
+    },
+    "Açu II": {
+        "corte_subestacao": 3.7850234076585587,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. afonso bezerra": 5.376404113183671,
+            "rei dos ventos 3": 4.513653389064654,
+            "alegria ii": 4.008272711978935,
+            "rei dos ventos 1": 3.701269806210993,
+            "conj. mangue seco": 3.158660063533957,
+            "miassaba 3": 3.020698435207248,
+            "alegria i": 2.9092392395049766
+        }
+    },
+    "Lagoa Nova II": {
+        "corte_subestacao": 0.983037211279386,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. acauã": 2.596244686312097,
+            "conj. serra de santana 1 e 2": 1.0917653098362456,
+            "conj. serra de santana 3": 0.9343630907479059,
+            "conj. calango 1": 0.7806380299579153,
+            "conj. calango 3": 0.6098531161143561,
+            "conj. calango 2": 0.5096761513991549
+        }
+    },
+    "Boa Hora": {
+        "corte_subestacao": 1.8843071897161183,
+        "corte_por_conjunto_fv": {
+            "conj. boa hora": 1.8843071897161183
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Aquibatã": {
+        "corte_subestacao": 0.4051957891136731,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. água doce": 0.4051957891136731
+        }
+    },
+    "Pecém II": {
+        "corte_subestacao": 2.9980850328306388,
+        "corte_por_conjunto_fv": {
+            "conj. serra do mato": 3.6514286757727232
+        },
+        "corte_por_conjunto_eol": {
+            "conj. serrote a": 3.865496865050962,
+            "conj. trairí": 3.1648988999014493,
+            "conj. faísa": 2.78634480235049,
+            "conj. taíba": 2.749371991693949,
+            "conj. serra do mato": 2.2147646796664606
+        }
+    },
+    "Coremas": {
+        "corte_subestacao": 3.782211188321402,
+        "corte_por_conjunto_fv": {
+            "conj. rio alto": 3.782211188321402
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Irecê": {
+        "corte_subestacao": 2.035892995963346,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. gentio do ouro i": 2.0358929959633456
+        }
+    },
+    "Gentio do Ouro II": {
+        "corte_subestacao": 3.081913614060231,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. serra do assuruá": 7.3346380659455575,
+            "conj. laranjeiras": 2.9536658509106135,
+            "conj. santa eugênia": 2.890038218959309,
+            "conj. ventos de são vitor": 2.666708116089058
+        }
+    },
+    "Brumado II": {
+        "corte_subestacao": 2.8475276643741054,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. cristalândia": 2.8475276643741054
+        }
+    },
+    "Paraíso": {
+        "corte_subestacao": 1.0454683121831325,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. santa rosa mundo novo": 1.0454683121831323
+        }
+    },
+    "Jandaíra": {
+        "corte_subestacao": 7.510025406123597,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. jandaíra iii": 7.510025406123597
+        }
+    },
+    "Riachão II": {
+        "corte_subestacao": 3.842148040588872,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. umari": 3.842148040588872
+        }
+    },
+    "Campo Formoso": {
+        "corte_subestacao": 2.0250037332924493,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. campo formoso": 2.0250037332924493
+        }
+    },
+    "Açu III - Lagoa Nova II C1": {
+        "corte_subestacao": 0.29600196066944456,
+        "corte_por_conjunto_fv": {
+            "conj. simplice": 0.29600196066944456
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Barreiras": {
+        "corte_subestacao": 5.069743508827899,
+        "corte_por_conjunto_fv": {
+            "conj. sertão solar barreiras": 5.069743508827899
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Livramento 2": {
+        "corte_subestacao": 0.18945664554042926,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. cerro chato": 0.18945664554042926
+        }
+    },
+    "Curral Novo do Piauí II": {
+        "corte_subestacao": 2.2958588847533927,
+        "corte_por_conjunto_fv": {
+            "conj. são basílio (solar)": 4.034668809480349
+        },
+        "corte_por_conjunto_eol": {
+            "conjunto eólico curral novo do piaui ii 230kv": 3.121440818256335,
+            "conj. curral novo do piaui ii 500 kv": 2.464638098084443,
+            "conj. são basílio (eólico)": 1.0718757620444581
+        }
+    },
+    "Monte Verde": {
+        "corte_subestacao": 6.080259786644568,
+        "corte_por_conjunto_fv": {
+            "conj. monte verde solar": 4.320104099560129
+        },
+        "corte_por_conjunto_eol": {
+            "conj. santo agostinho": 7.282035934103385,
+            "conj. jerusalém": 6.504695213098828,
+            "conj. monte verde": 5.445276350105212
+        }
+    },
+    "Miranda II": {
+        "corte_subestacao": 1.313605193244367,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. paulino neves": 1.3136051932443673
+        }
+    },
+    "Viamão 3 ": {
+        "corte_subestacao": 0.29605654197471104,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. viamão 3": 0.2960565419747111
+        }
+    },
+    "Brotas de Macaúbas": {
+        "corte_subestacao": 4.379086095408818,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. brotas de macaúbas": 4.379086095408818
+        }
+    },
+    "Arinos 2": {
+        "corte_subestacao": 2.5962765958981775,
+        "corte_por_conjunto_fv": {
+            "conj. arinos 2 500 kv": 2.596276595898177
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Várzea da Palma 4": {
+        "corte_subestacao": 3.7557542549883856,
+        "corte_por_conjunto_fv": {
+            "conj. helio valgas": 3.7557542549883864
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Açu III": {
+        "corte_subestacao": 6.268381919776541,
+        "corte_por_conjunto_fv": {
+            "conj. serra do mel c": 7.087939773312025,
+            "conj. açú iii 230 kv": 4.211686070302021
+        },
+        "corte_por_conjunto_eol": {
+            "conj. serra do mel b": 8.093994308419616,
+            "conj. serra do mel a": 7.077540366801007,
+            "conj. serra do mel ii a": 6.737090213788966,
+            "conj. serra do mel ii b": 4.692136473093225,
+            "conj. caju": 4.47523502031011
+        }
+    },
+    "Igaporã III": {
+        "corte_subestacao": 6.940655532140301,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. igaporã iii 500 kv": 17.295024740504253,
+            "conj. caetité norte": 9.674479417952176,
+            "conj. tanque novo": 5.5795453397886705,
+            "conj. tamboril ii": 5.328428959995332
+        }
+    },
+    "Ibiapina II - Piripiri C2": {
+        "corte_subestacao": 6.349658406980496,
+        "corte_por_conjunto_fv": {
+            "conj. marangatu": 6.349658406980496
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Aquiraz II": {
+        "corte_subestacao": 1.5055637350414586,
+        "corte_por_conjunto_fv": {
+            "conj. sol do futuro": 1.5055637350414586
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Futura": {
+        "corte_subestacao": 3.8068175514251075,
+        "corte_por_conjunto_fv": {
+            "conj. futura": 3.8068175514251075
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "João Câmara III": {
+        "corte_subestacao": 3.307387259001534,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. jandaíra i": 5.1437906265345585,
+            "conj. olho d'água": 4.978365861429251,
+            "conj. brisa potiguar i": 4.387814931625451,
+            "conj. cumaru": 3.80201364093725,
+            "conj. bloco sul": 3.769576808312498,
+            "conj. monte do ronca": 3.688531780972547,
+            "conj. campo dos ventos": 3.4026097293060342,
+            "conj. renascença": 3.3933951645993186,
+            "conj. renascença v": 3.064242737582365,
+            "conj. morro dos ventos ii": 2.7162711612992876,
+            "conj. asa branca": 2.6879165207321365,
+            "conj. macacos": 2.5582079522979537,
+            "conj. cabeço preto ii": 2.260301568584686,
+            "conj. baixa do feijão": 0.8215794847710658
+        }
+    },
+    "Queimada Nova II": {
+        "corte_subestacao": 1.1351141780166498,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. oitis": 1.3530014551027365,
+            "conj. são roque": 0.9170297178743766
+        }
+    },
+    "Sobradinho": {
+        "corte_subestacao": 1.5586553846310014,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. arizona": 1.978385033374015,
+            "conj. casa nova": 1.3613983549105313,
+            "conj. pedra branca": 1.3361827656084575
+        }
+    },
+    "Tacaratu": {
+        "corte_subestacao": 1.3137460795961553,
+        "corte_por_conjunto_fv": {
+            "conj. tacaratu (solar)": 3.421202242681609
+        },
+        "corte_por_conjunto_eol": {
+            "conj. tacaratu (eólico)": 1.5470912992395336,
+            "conj. tacaratu ii": 0.4346425242220774
+        }
+    },
+    "Tabocas do Brejo Velho": {
+        "corte_subestacao": 7.465120229191515,
+        "corte_por_conjunto_fv": {
+            "conj. horizonte": 7.6379483292519845,
+            "conj. ituverava": 7.292292129131047
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Chapada III": {
+        "corte_subestacao": 1.1756932109933038,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. chapada iii": 1.175693210993304
+        }
+    },
+    "Currais Novos II": {
+        "corte_subestacao": 2.064189098984817,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. anemus": 2.064189098984817
+        }
+    },
+    "Bom Jesus da Lapa": {
+        "corte_subestacao": 6.753378120277211,
+        "corte_por_conjunto_fv": {
+            "conj. bjl": 9.474460256633419,
+            "conj. são pedro": 8.786958358001712,
+            "conj. lapa": 4.64636513059196,
+            "conj. bom jesus": 4.105728735881744
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "Quinta": {
+        "corte_subestacao": 0.41563075369307234,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. quinta 138 kv": 0.4640671582958428,
+            "conj. quinta 69 kv": 0.36719434909030196
+        }
+    },
+    "Cauípe": {
+        "corte_subestacao": 4.051666839942994,
+        "corte_por_conjunto_fv": {
+            "conj. lavras": 4.051666839942994
+        },
+        "corte_por_conjunto_eol": {}
+    },
+    "São João do Piauí": {
+        "corte_subestacao": 2.36920740505062,
+        "corte_por_conjunto_fv": {
+            "conj. fv sjp": 3.716101985647235,
+            "conj. nova olinda": 2.7495216667996227
+        },
+        "corte_por_conjunto_eol": {
+            "conj. lagoa dos ventos": 2.6322834784208293,
+            "conj. lagoa do barro i": 1.6218256468724876
+        }
+    },
+    "Ourolândia II": {
+        "corte_subestacao": 2.7047506593604496,
+        "corte_por_conjunto_fv": {},
+        "corte_por_conjunto_eol": {
+            "conj. ourolândia ii": 6.4219748854287655,
+            "conj. eólico campo largo": 4.775347210521007,
+            "conj. umburanas": 2.313219963953621,
+            "conj. babilônia sul": 2.0039972572581366
+        }
+    }
+}
