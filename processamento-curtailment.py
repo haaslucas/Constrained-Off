@@ -10,7 +10,7 @@ UFV['conjunto'] = UFV['conjunto'].fillna('none')
 UFV.nome = UFV.nome.str.lower()
 UFV.conjunto = UFV.conjunto.str.lower()
 
-CON_UFV = pd.read_parquet(PASTA + 'dataframeFV2.parquet')
+CON_UFV = pd.read_parquet(PASTA + 'dataframeFV.parquet')
 CON_UFV['Corte %'].fillna(0, inplace=True)
 
 CON_UFV.nom_usina = CON_UFV.nom_usina.str.lower()
@@ -37,7 +37,7 @@ EOL['conjunto'] = EOL['conjunto'].fillna('none')
 
 EOL.conjunto = EOL.conjunto.str.lower()
 
-CON_EOL = pd.read_parquet(PASTA + 'dataframeEOL2.parquet')
+CON_EOL = pd.read_parquet(PASTA + 'dataframeEOL.parquet')
 CON_EOL['Corte %'].fillna(0, inplace=True)
 
 CON_EOL.nom_usina = CON_EOL.nom_usina.str.lower()
@@ -69,7 +69,8 @@ subestacoes = set(subestacoes_fv) | set(subestacoes_eol)
 CON_UFV.to_parquet(PASTA + 'constrained-off_fv.parquet', engine='pyarrow', compression='gzip')
 CON_EOL.to_parquet(PASTA + 'constrained-off_eol.parquet', engine='pyarrow', compression='gzip')
 
-
+######################################
+# daqui pra baixo não é utilizado mais
 for sub in subestacoes:
     cortes_fv_dessa_subestacao = CON_UFV[CON_UFV['subestacao'] == sub]
     cortes_eol_dessa_subestacao = CON_EOL[CON_EOL['subestacao'] == sub]

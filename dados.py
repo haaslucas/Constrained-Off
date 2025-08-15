@@ -41,6 +41,7 @@ def read_csv():
         ), axis=1
     )
 
+
     # Preenchimento da Geração Frustrada
     df['geracao_frustrada'] = np.where(
         df['val_geracaolimitada'] != 0 & pd.notna(df['val_geracaolimitada']),  # Se geração limitada não é zero
@@ -68,6 +69,7 @@ def read_csv():
         (df['val_disponibilidade'].notna()) & 
         (df['val_disponibilidade'] != 0) & 
         (df['geracao_frustrada'] <= df['val_disponibilidade']),  # Verificação adicional
+        
         100 * (df['geracao_frustrada'] / df['val_disponibilidade']),  # Corte %
         np.nan  # Caso contrário, atribui NaN
     )
