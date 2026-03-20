@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "UTE",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4674" } },
+"features": [
+{ "type": "Feature", "properties": { "Nome": "Almirante Álvaro Alberto - Unidade I (Antiga Angra I)", "COMBUST": "Nuclear", "potencia": 640000.0, "propriet": "EletrobrásTermonuclear S/A.", "ini_oper": "1985-01-01T00:00:00", "ceg": "UTN.UR.RJ.000100-7.01", "created_us": "BERNARDO.OLIVEIRA", "created_da": "2022-03-15T00:00:00", "last_edite": "BERNARDO.OLIVEIRA", "last_edi_1": "2022-03-15T00:00:00" }, "geometry": { "type": "Point", "coordinates": [ -44.457444443999975, -23.008711111999958 ] } },
+{ "type": "Feature", "properties": { "Nome": "Almirante Álvaro Alberto - Unidade II (Antiga Angra II)", "COMBUST": "Nuclear", "potencia": 1350000.0, "propriet": "EletrobrásTermonuclear S/A.", "ini_oper": "2000-06-01T00:00:00", "ceg": "UTN.UR.RJ.000101-5.01", "created_us": "BERNARDO.OLIVEIRA", "created_da": "2022-03-15T00:00:00", "last_edite": "BERNARDO.OLIVEIRA", "last_edi_1": "2022-03-15T00:00:00" }, "geometry": { "type": "Point", "coordinates": [ -44.458761110999944, -23.007208333999927 ] } }
+]
+}
